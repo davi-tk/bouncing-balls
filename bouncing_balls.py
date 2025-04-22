@@ -15,7 +15,7 @@ BLACK = (0, 0, 0)
 
 N_BALLS = 20
 RADIUS = 5
-SPEED = 10
+SPEED = 5
 
 clock = pygame.time.Clock()
 
@@ -72,10 +72,50 @@ class Ball:
             self.y_speed *= -1
     
     def draw(self):
-        pygame.draw.circle(screen, self.color, self.get_coordinate(), RADIUS)
+        pygame.draw.circle(screen, self.color, self.get_coordinate(), RADIUS, width=2)
         pygame.draw.line(trail_surface, self.color, (self.x_trail, self.y_trail),
                           self.get_coordinate(), RADIUS)
+
+def is_colliding(ball1 : Ball, ball2 : Ball):
+    dx = ball1.x - ball2.x
+    dy = ball1.y - ball2.y
+    distance = math.hypot(dx, dy)
     
+    return distance <= RADIUS * 2
+
+def resolve_collision(ball1: Ball, ball2: Ball):
+    dx = ball1.x - ball2.x
+    dy = ball1.y - ball2.y
+    distance = math.hypot(dx, dy)
+
+    if distance == 0 : 
+        return
+
+    nx = dx / distance
+    ny = dy / distance
+    overlap = 2 * RADIUS - distance
+    if overlap > 0:
+
+
+        ball1.x += nx * (overlap / 2)
+        ball1.y += ny * (overlap / 2)
+        ball2.x -= nx * (overlap / 2)
+        ball2.y -= ny * (overlap / 2)
+
+    dvx = ball1.x_speed - ball2.x_speed
+    dvy = ball1.y_speed - ball2.y_speed
+
+    dot = dvx * nx + dvy * ny
+
+    if dot > 0:
+        return
+
+    ball1.x_speed -= dot * nx
+    ball1.y_speed -= dot * ny
+    ball2.x_speed += dot * nx
+    ball2.y_speed += dot * ny
+        
+
 
 balls = [Ball() for _ in range(N_BALLS)]
 
@@ -89,9 +129,15 @@ while True:
     trail_surface.fill((0, 0, 0, 5), special_flags=pygame.BLEND_RGBA_SUB)
     screen.blit(trail_surface, (0, 0))
 
+    for i in range(len(balls)):
+        for j in range(i + 1, len(balls)):
+            if is_colliding(balls[i], balls[j]):
+                resolve_collision(balls[i], balls[j])
+
     for ball in balls:
         ball.update()
         ball.draw()
+    
 
     pygame.display.flip()
     clock.tick(60)
