@@ -2,6 +2,7 @@ import sys
 import pygame
 import random
 import math
+import colorsys
 
 pygame.init()
 WIDTH, HEIGHT = 800, 600
@@ -17,11 +18,12 @@ SPEED = 4
 clock = pygame.time.Clock()
 
 def random_color():
-    r = random.randint(0, 255)
-    g = random.randint(0, 255)
-    b = random.randint(0, 255)
+    h = random.random()
+    s = 1.0
+    v = 1.0
+    r, g, b = colorsys.hsv_to_rgb(h, s, v)
 
-    return(r, g, b)
+    return(int(r * 255), int(g * 255), int(b * 255))
 
 def random_angle():
     return random.uniform(0, 2 * math.pi)
