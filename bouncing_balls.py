@@ -8,7 +8,7 @@ pygame.init()
 WIDTH, HEIGHT = 800, 600
 dimensions = (WIDTH, HEIGHT)
 screen = pygame.display.set_mode(dimensions)
-trail_screen = pygame.Surface(dimensions, pygame.SRCALPHA)
+trail_surface = pygame.Surface(dimensions, pygame.SRCALPHA)
 
 #Const
 BLACK = (0, 0, 0)
@@ -73,7 +73,7 @@ class Ball:
     
     def draw(self):
         pygame.draw.circle(screen, self.color, self.get_coordinate(), RADIUS)
-        pygame.draw.line(trail_screen, self.color, (self.x_trail, self.y_trail),
+        pygame.draw.line(trail_surface, self.color, (self.x_trail, self.y_trail),
                           self.get_coordinate(), RADIUS)
     
 
@@ -86,7 +86,8 @@ while True:
             sys.exit()
     
     screen.fill(BLACK)
-    screen.blit(trail_screen, (0, 0))
+    trail_surface.fill((0, 0, 0, 5), special_flags=pygame.BLEND_RGBA_SUB)
+    screen.blit(trail_surface, (0, 0))
 
     for ball in balls:
         ball.update()
