@@ -13,7 +13,7 @@ BLACK = (0, 0, 0)
 
 N_BALLS = 20
 RADIUS = 5
-SPEED = 4
+SPEED = 10
 
 clock = pygame.time.Clock()
 
