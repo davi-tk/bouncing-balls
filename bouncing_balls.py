@@ -6,7 +6,9 @@ import colorsys
 
 pygame.init()
 WIDTH, HEIGHT = 800, 600
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
+dimensions = (WIDTH, HEIGHT)
+screen = pygame.display.set_mode(dimensions)
+trail_screen = pygame.Surface(dimensions, pygame.SRCALPHA)
 
 #Const
 BLACK = (0, 0, 0)
@@ -38,6 +40,9 @@ class Ball:
         self.x, self.y = random_position()
         self.angle = random_angle()
 
+        self.x_trail = self.x
+        self.y_trail = self.y
+
         self.x_speed = math.cos(self.angle) * SPEED
         self.y_speed = math.sin(self.angle) * SPEED
         self.color = random_color()
@@ -46,6 +51,9 @@ class Ball:
         return (self.x, self.y)
     
     def update(self):
+        self.x_trail = self.x
+        self.y_trail = self.y
+
         self.x += self.x_speed
         self.y += self.y_speed
 
@@ -65,6 +73,9 @@ class Ball:
     
     def draw(self):
         pygame.draw.circle(screen, self.color, self.get_coordinate(), RADIUS)
+        pygame.draw.line(trail_screen, self.color, (self.x_trail, self.y_trail),
+                          self.get_coordinate(), RADIUS)
+    
 
 balls = [Ball() for _ in range(N_BALLS)]
 
@@ -75,6 +86,7 @@ while True:
             sys.exit()
     
     screen.fill(BLACK)
+    screen.blit(trail_screen, (0, 0))
 
     for ball in balls:
         ball.update()
